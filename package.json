@@ -1,0 +1,40 @@
+{
+  "name": "ncdc-server",
+  "scripts": {
+    "clear": "rimraf ./dist",
+    "ts:watch": "tsc -w",
+    "ts:build": "tsc",
+    "serve": "nodemon dist/server.js",
+    "watch": "concurrently \"npm run ts:watch\" \"npm run serve\"",
+    "build": "npm run ts:build",
+    "prod:serve": "node dist/server.js",
+    "start": "npm run build && npm run prod:serve",
+    "tslint": "tslint -c tslint.json -p tsconfig.json"
+  },
+  "dependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/body-parser": "^1.17.0",
+    "@types/cors": "^2.8.6",
+    "@types/express": "^4.17.2",
+    "@types/jsonwebtoken": "^8.3.9",
+    "@types/mongoose": "^5.7.8",
+    "@types/mongoose-unique-validator": "^1.0.3",
+    "@types/node": "^12.7.2",
+    "@types/underscore": "^1.9.4",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.8.9",
+    "mongoose-unique-validator": "^2.0.3",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.8.3",
+    "underscore": "^1.10.2"
+  },
+  "devDependencies": {
+    "concurrently": "^5.1.0",
+    "nodemon": "^1.11.0",
+    "tslint": "^5.5.0"
+  }
+}
