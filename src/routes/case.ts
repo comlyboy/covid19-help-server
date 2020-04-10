@@ -226,7 +226,10 @@ async function getCaseByContact(req: express.Request, res: express.Response, nex
             phoneNumber: req.params.phoneNumber,
         });
 
-        res.status(200).json(casse);
+        if (!casse) {
+            return res.status(200).json(false);
+        }
+        res.status(200).json(true);
 
     } catch (error) {
         res.status(500).json({
