@@ -1,14 +1,13 @@
 // jwt is a token dependency for verifying user in middleware
 // bcrypt prevent the password from saving as a plain text in d database
-// 
 
-//@ts-check
+// @ts-check
 
-import express from 'express';
-import User, { IUser, ISignup } from '../model/user';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import authCheck from '../middleware/auth-check';
+import bcrypt from "bcryptjs";
+import express from "express";
+import jwt from "jsonwebtoken";
+import authCheck from "../middleware/auth-check";
+import User, { ISignup, IUser } from "../model/user";
 
 
 const router = express.Router();
@@ -23,7 +22,7 @@ async function signupUser(req: express.Request, res: express.Response, next: exp
         const user = await User.findOne({ userName: req.body.userName }).exec();
         if (user) {
             return res.status(401).json({
-                message: "Username already existing"
+                message: "Username already existing",
             });
         }
 
@@ -31,7 +30,7 @@ async function signupUser(req: express.Request, res: express.Response, next: exp
         const new_user_obj = new User({
             userName: user_req_body.userName,
             state: user_req_body.state,
-            password: hash
+            password: hash,
         });
 
         const result = await new_user_obj.save();
@@ -42,45 +41,43 @@ async function signupUser(req: express.Request, res: express.Response, next: exp
                 { _id: result._id },
                 {
                     $set: {
-                        isAdmin: true
-                    }
+                        isAdmin: true,
+                    },
                 }).exec()
         }
         res.status(201).json(result);
 
     } catch (error) {
-        console.log(error)
         res.status(500).json({
-            message: error
+            message: error,
         });
     }
 
 }
 
-
-router.post('/user/login', loginUser)
+router.post("/user/login", loginUser)
 async function loginUser(req: express.Request, res: express.Response, next: express.NextFunction) {
 
     try {
         const fetchedUser: IUser = await User.findOne({ userName: req.body.userName }).exec();
         if (!fetchedUser) {
             return res.status(401).json({
-                message: 'Not a registered user'
+                message: "Not a registered user",
             });
         }
 
         const hashResult = await bcrypt.compare(req.body.password, fetchedUser.password);
         if (!hashResult) {
             return res.status(401).json({
-                message: "Invalid password!"
+                message: "Invalid password!",
             });
         }
 
         const token = jwt.sign({
             userName: fetchedUser.userName,
-            userId: fetchedUser._id
+            userId: fetchedUser._id,
         },
-            'is_a_secret_dont_tell_anybody'
+            "is_a_secret_dont_tell_anybody",
         );
 
 
@@ -91,13 +88,12 @@ async function loginUser(req: express.Request, res: express.Response, next: expr
                 userName: fetchedUser.userName,
                 state: fetchedUser.state,
                 isAdmin: fetchedUser.isAdmin,
-            }
+            },
         });
 
     } catch (error) {
-        console.log(error)
         res.status(500).json({
-            message: "Something went wrong!"
+            message: "Something went wrong!",
         });
     }
 
@@ -112,12 +108,12 @@ async function userLastLogin(req: express.Request, res: express.Response, next: 
     try {
         const result = await User.updateOne(
             {
-                _id: req.params._id
+                _id: req.params._id,
             },
             {
                 $set: {
                     lastLogin: lastLogin_date,
-                }
+                },
             }).exec();
 
         res.status(201).json({
@@ -126,7 +122,7 @@ async function userLastLogin(req: express.Request, res: express.Response, next: 
 
     } catch (error) {
         res.status(500).json({
-            message: "Something went wrong!"
+            message: "Something went wrong!",
         });
     }
 
@@ -148,11 +144,10 @@ async function getUserProfile(req: express.Request, res: express.Response, next:
 
     } catch (error) {
         res.status(500).json({
-            message: "Something went wrong!"
+            message: "Something went wrong!",
         });
     }
 
 }
-
 
 export default router;

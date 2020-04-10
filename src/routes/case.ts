@@ -1,11 +1,11 @@
-import express from 'express';
+import express from "express";
 
-import Case, { ICase } from '../model/case';
-import authCheck from '../middleware/auth-check';
+import authCheck from "../middleware/auth-check";
+import Case, { ICase } from "../model/case";
 
 import _ from "underscore";
 
-import { generateId } from '../helper/unique-id';
+import { generateId } from "../helper/unique-id";
 
 const router = express.Router();
 
@@ -15,10 +15,10 @@ const definedStatus = {
     isConfirmed: 3,
     isQuanrantined: 4,
     isNotSick: 5,
-    isFake: 6
+    isFake: 6,
 };
 
-router.post("/case", newCase)
+router.post("/case", newCase);
 async function newCase(req: express.Request, res: express.Response, next: express.NextFunction) {
 
     const case_req_body: ICase = req.body;
@@ -34,16 +34,16 @@ async function newCase(req: express.Request, res: express.Response, next: expres
             dateOfBirth: case_req_body.dateOfBirth,
             address: case_req_body.address,
             symptoms: case_req_body.symptoms,
-            caseId: case_id
+            caseId: case_id,
         });
 
-        const result = await new_case_obj.save()
+        const result = await new_case_obj.save();
 
         res.status(201).json(result);
 
     } catch (error) {
         res.status(500).json({
-            message: "Something went wrong!"
+            message: "Something went wrong!",
         });
     }
 }
@@ -56,7 +56,7 @@ async function getCases(req: express.Request, res: express.Response, next: expre
     const currentPage = +req.query.page;
 
     const SearchQuery = req.query.search;
-    let cases: ICase[]
+    let cases: ICase[];
 
     try {
         if (casesPerPage && currentPage) {
@@ -73,22 +73,22 @@ async function getCases(req: express.Request, res: express.Response, next: expre
 
         res.status(200).json({
             cases: cases,
-            totalCases: totalCases
+            totalCases: totalCases,
         });
 
     } catch (error) {
         res.status(500).json({
-            message: "Something went wrong!"
+            message: "Something went wrong!",
         });
     }
-};
+}
 
 router.get("/case_by_state/:state", authCheck, getStateCases);
 async function getStateCases(req: express.Request, res: express.Response, next: express.NextFunction) {
 
     try {
         const cases = await Case.find({
-            state: req.params.state
+            state: req.params.state,
         })
             .sort("registeredAt")
             .limit(6).exec();
@@ -99,32 +99,32 @@ async function getStateCases(req: express.Request, res: express.Response, next: 
 
         const totalNewCases = await Case.countDocuments({
             state: req.params.state,
-            status: definedStatus.isNew
+            status: definedStatus.isNew,
         }).exec();
 
         const totalContacted = await Case.countDocuments({
             state: req.params.state,
-            status: definedStatus.isContacted
+            status: definedStatus.isContacted,
         }).exec();
 
         const totalConfirmed = await Case.countDocuments({
             state: req.params.state,
-            status: definedStatus.isConfirmed
+            status: definedStatus.isConfirmed,
         }).exec();
 
         const totalQuanrantined = await Case.countDocuments({
             state: req.params.state,
-            status: definedStatus.isQuanrantined
+            status: definedStatus.isQuanrantined,
         }).exec();
 
         const totalNotSick = await Case.countDocuments({
             state: req.params.state,
-            status: definedStatus.isNotSick
+            status: definedStatus.isNotSick,
         }).exec();
 
         const totalFake = await Case.countDocuments({
             state: req.params.state,
-            status: definedStatus.isFake
+            status: definedStatus.isFake,
         }).exec();
 
         res.status(200).json({
@@ -140,10 +140,10 @@ async function getStateCases(req: express.Request, res: express.Response, next: 
 
     } catch (error) {
         res.status(500).json({
-            message: "Something went wrong!"
+            message: "Something went wrong!",
         });
     }
-};
+}
 
 
 
@@ -159,27 +159,27 @@ async function getMetrics(req: express.Request, res: express.Response, next: exp
         const totalCases = await Case.countDocuments();
 
         const totalNewCases = await Case.countDocuments({
-            status: definedStatus.isNew
+            status: definedStatus.isNew,
         }).exec();
 
         const totalContacted = await Case.countDocuments({
-            status: definedStatus.isContacted
+            status: definedStatus.isContacted,
         }).exec();
 
         const totalConfirmed = await Case.countDocuments({
-            status: definedStatus.isConfirmed
+            status: definedStatus.isConfirmed,
         }).exec();
 
         const totalQuanrantined = await Case.countDocuments({
-            status: definedStatus.isQuanrantined
+            status: definedStatus.isQuanrantined,
         }).exec();
 
         const totalNotSick = await Case.countDocuments({
-            status: definedStatus.isNotSick
+            status: definedStatus.isNotSick,
         }).exec();
 
         const totalFake = await Case.countDocuments({
-            status: definedStatus.isFake
+            status: definedStatus.isFake,
         }).exec();
 
         res.status(200).json({
@@ -190,33 +190,47 @@ async function getMetrics(req: express.Request, res: express.Response, next: exp
             totalConfirmed: totalConfirmed,
             totalQuanrantined: totalQuanrantined,
             totalNotSick: totalNotSick,
-            totalFake: totalFake
+            totalFake: totalFake,
         });
 
     } catch (error) {
         res.status(500).json({
-            message: "Something went wrong!"
+            message: "Something went wrong!",
         });
     }
-};
+}
 
-
-
-// Getting one case for editing and details pages
 router.get("/case/:_id", authCheck, getCaseById);
 async function getCaseById(req: express.Request, res: express.Response, next: express.NextFunction) {
 
     try {
         const casse = await Case.findById({
-            _id: req.params._id
-        })
+            _id: req.params._id,
+        });
 
 
         res.status(200).json(casse);
 
     } catch (error) {
         res.status(500).json({
-            message: "Somethiing went wrong!"
+            message: "Something went wrong!",
+        });
+    }
+}
+
+router.get("/case/verify/:phoneNumber", getCaseByContact);
+async function getCaseByContact(req: express.Request, res: express.Response, next: express.NextFunction) {
+
+    try {
+        const casse = await Case.findOne({
+            phoneNumber: req.params.phoneNumber,
+        });
+
+        res.status(200).json(casse);
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Something went wrong!",
         });
     }
 }
@@ -230,7 +244,7 @@ async function deleteCase(req: express.Request, res: express.Response, next: exp
     try {
         await Case.deleteOne({
             _id: req.params._id,
-        })
+        });
 
         res.status(201).json({
             message: "Successfully!",
@@ -238,10 +252,10 @@ async function deleteCase(req: express.Request, res: express.Response, next: exp
 
     } catch (error) {
         res.status(500).json({
-            message: "Somethiing went wrong!"
+            message: "Something went wrong!",
         });
-    };
-};
+    }
+}
 
 
 router.put("/case/:_id", authCheck, updateCase);
@@ -263,29 +277,26 @@ async function updateCase(req: express.Request, res: express.Response, next: exp
             message: "Successfully!",
         });
 
-
-
     } catch (error) {
         res.status(500).json({
-            message: "Somethiing went wrong!"
+            message: "Something went wrong!",
         });
-    };
-};
-
+    }
+}
 
 router.put("/case_status/:_id", authCheck, updateCaseStatus);
 async function updateCaseStatus(req: express.Request, res: express.Response, next: express.NextFunction) {
-    const casse = req.body
+    const casse = req.body;
     try {
         const result = await Case.updateOne(
             {
-                _id: req.params._id
+                _id: req.params._id,
             },
             {
                 $set: {
-                    status: casse.status
-                }
-            }).exec()
+                    status: casse.status,
+                },
+            }).exec();
 
         if (result.nModified > 0) {
             res.status(200).json({ message: "Updated successfully!" });
@@ -294,9 +305,9 @@ async function updateCaseStatus(req: express.Request, res: express.Response, nex
         }
     } catch (error) {
         res.status(500).json({
-            message: "Somethiing went wrong!"
+            message: "Something went wrong!",
         });
-    };
-};
+    }
+}
 
 export default router;
