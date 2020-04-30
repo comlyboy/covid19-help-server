@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const DB_URL = "mongodb+srv://corneliusDbUser:corneliusDbPassword@ncdc-help-database-fcwkp.mongodb.net/test?retryWrites=true&w=majority";
 
@@ -21,12 +21,12 @@ const connect_DB = async () => {
         const conne = await mongoose.connect(DB_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useCreateIndex: true
+            useCreateIndex: true,
         });
-        console.log('Connected to database ==> 100%');
+        console.log("Connected to database ==> 100%");
     } catch (error) {
         console.log(error);
-        console.log('Cannot connect to database');
+        console.log("Cannot connect to database");
 
     }
 
