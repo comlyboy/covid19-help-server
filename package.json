@@ -30,7 +30,7 @@
     "mongoose-unique-validator": "^2.0.3",
     "rimraf": "^3.0.2",
     "typescript": "^3.8.3",
-    "underscore": "^1.10.2"
+    "underscore": "^1.12.1"
   },
   "devDependencies": {
     "concurrently": "^5.1.0",
