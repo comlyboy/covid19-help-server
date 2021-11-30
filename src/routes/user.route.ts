@@ -6,7 +6,7 @@
 import express from "express";
 import { SignupUser, LoginUser, UserLastLogin, GetUserProfile } from "../controller/user.controller";
 
-import authCheck from "../middleware/auth-check";
+import { AuthGuard } from "../middleware/auth.guard";
 
 const router = express.Router();
 
@@ -15,9 +15,9 @@ router.post("/user/signup", SignupUser)
 
 router.post("/user/login", LoginUser)
 
-router.put("/user/last_login/:_id", authCheck, UserLastLogin);
+router.put("/user/last_login/:_id", AuthGuard, UserLastLogin);
 
-router.get("/user/:_id", authCheck, GetUserProfile);
+router.get("/user/:_id", AuthGuard, GetUserProfile);
 
 
 export const UserRoute = router;

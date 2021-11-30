@@ -1,4 +1,4 @@
-export function generateId(length: number) {
+export function GenerateCustomId(length: number) {
     let _length = length;
     let timestamp = +new Date;
     let ts = timestamp.toString();
@@ -13,5 +13,5 @@ export function generateId(length: number) {
         id += parts[index];
     };
 
-    return `NCDC_${id}`;
+    return `NCDC${id}`;
 };

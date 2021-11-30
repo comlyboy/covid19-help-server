@@ -8,7 +8,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { UserSignUpDto } from "../interface/user.interface";
 
-import authCheck from "../middleware/auth-check";
+import { AuthGuard } from "../middleware/auth.guard";
 import { User } from "../model/user.schema";
 
 

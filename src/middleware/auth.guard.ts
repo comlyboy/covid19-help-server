@@ -4,7 +4,7 @@
 import jwt from 'jsonwebtoken';
 import express from 'express';
 
-export default (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export function AuthGuard(req: express.Request, res: express.Response, next: express.NextFunction) {
     try {
         const authorization = req.headers.authorization || "";
         const token = authorization.split(" ")[1];
