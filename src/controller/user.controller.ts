@@ -6,18 +6,18 @@
 import bcrypt from "bcryptjs";
 import express from "express";
 import jwt from "jsonwebtoken";
+import { UserSignUpDto } from "../interface/user.interface";
+
 import authCheck from "../middleware/auth-check";
-import User, { ISignup, IUser } from "../model/user";
+import { User } from "../model/user.schema";
 
 
 const router = express.Router();
 
 
+export async function SignupUser(req: express.Request, res: express.Response, next: express.NextFunction) {
 
-router.post("/user/signup", signupUser)
-async function signupUser(req: express.Request, res: express.Response, next: express.NextFunction) {
-
-    const user_req_body: ISignup = req.body;
+    const { userName, state, password }: UserSignUpDto = req.body;
     try {
         const user = await User.findOne({ userName: req.body.userName }).exec();
         if (user) {
@@ -26,11 +26,12 @@ async function signupUser(req: express.Request, res: express.Response, next: exp
             });
         }
 
-        const hash = await bcrypt.hash(req.body.password, 10);
+        const hash = await bcrypt.hash(password, 10);
+
         const new_user_obj = new User({
-            userName: user_req_body.userName,
-            state: user_req_body.state,
-            password: hash,
+            userName,
+            state,
+            password: hash
         });
 
         const result = await new_user_obj.save();
@@ -55,11 +56,10 @@ async function signupUser(req: express.Request, res: express.Response, next: exp
 
 }
 
-router.post("/user/login", loginUser)
-async function loginUser(req: express.Request, res: express.Response, next: express.NextFunction) {
+export async function LoginUser(req: express.Request, res: express.Response, next: express.NextFunction) {
 
     try {
-        const fetchedUser: IUser = await User.findOne({ userName: req.body.userName }).exec();
+        const fetchedUser = await User.findOne({ userName: req.body.userName }).exec();
         if (!fetchedUser) {
             return res.status(401).json({
                 message: "Not a registered user",
@@ -101,8 +101,7 @@ async function loginUser(req: express.Request, res: express.Response, next: expr
 
 
 
-router.put("/user/last_login/:_id", authCheck, userLastLogin);
-async function userLastLogin(req: express.Request, res: express.Response, next: express.NextFunction) {
+export async function UserLastLogin(req: express.Request, res: express.Response, next: express.NextFunction) {
     let lastLogin_date = Date.now()
 
     try {
@@ -128,9 +127,8 @@ async function userLastLogin(req: express.Request, res: express.Response, next: 
 
 }
 
-// Getting one user for editing and details pages
-router.get("/user/:_id", authCheck, getUserProfile);
-async function getUserProfile(req: express.Request, res: express.Response, next: express.NextFunction) {
+
+export async function GetUserProfile(req: express.Request, res: express.Response, next: express.NextFunction) {
     try {
         const user = await User.findById({
             _id: req.params._id,
@@ -150,4 +148,4 @@ async function getUserProfile(req: express.Request, res: express.Response, next:
 
 }
 
-export default router;
+export const UserRoute = router;

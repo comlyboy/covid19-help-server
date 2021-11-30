@@ -2,23 +2,22 @@
 // mongoose makes schema possible in mongo DB
 // bodyparser exposes the body portion of an incoming request on "req.body"
 
-import bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
 
-import connect_DB from "./db/connection";
+import { ConnectDB } from "./db/connection";
 
-import caseRoutes from "./routes/case";
-import usersRoutes from "./routes/user";
+import { CaseRoute } from "./routes/case.route";
+import { UserRoute } from "./routes/user.route";
 
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// // Connecting to mongoDB database
-connect_DB();
+// Connecting to mongoDB database
+ConnectDB();
 
 // permissions
 app.use((req, res, next) => {
@@ -30,8 +29,8 @@ app.use((req, res, next) => {
 });
 
 // For various routes
-app.use("/api/v1", usersRoutes);
-app.use("/api/v1", caseRoutes);
+app.use("/api/v1", UserRoute);
+app.use("/api/v1", CaseRoute);
 
 app.get("/", (req: express.Request, res: express.Response): express.Response => {
     return res.send(`<!DOCTYPE html>
