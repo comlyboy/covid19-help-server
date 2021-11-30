@@ -3,17 +3,33 @@
 
 import jwt from 'jsonwebtoken';
 import express from 'express';
+import { SERVER_SECRET_KEY } from '../configuration/configuration';
 
 export function AuthGuard(req: express.Request, res: express.Response, next: express.NextFunction) {
     try {
         const authorization = req.headers.authorization || "";
         const token = authorization.split(" ")[1];
-        const decodedToken: any = jwt.verify(token, 'is_a_secret_dont_tell_anybody');
+        const decodedToken: any = jwt.verify(token, SERVER_SECRET_KEY);
+
         req["userData"] = { userName: decodedToken.userName, userId: decodedToken.userId };
+
         next();
     } catch (error) {
-        res.status(401).json({
-            message: "You are not logged in!!!"
+        if (error.message === `jwt expired`) {
+            return res.status(403).json({
+                message: `Your session has expired. Please log in again!`
+            })
+        }
+        
+        if (error.message === `invalid signature`) {
+            return res.status(403).json({
+                message: `Invalid authentication signature!`
+            })
+        }
+
+        res.status(403).json({
+            message: `You are not logged in!`
         })
+
     }
 };

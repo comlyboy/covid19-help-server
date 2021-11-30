@@ -5,5 +5,5 @@ import { PORT } from "./configuration/configuration";
 
 
 app.listen(PORT, () => {
-    console.log(`Listening to port ${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}/api/v1`);
 });
